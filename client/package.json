@@ -1,0 +1,20 @@
+{
+  "name": "amap-maps-mcp-client",
+  "version": "1.0.0",
+  "description": "MCP client for AMap Maps MCP Server (Streamable HTTP)",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "tsc && node dist/test-cases.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.1"
+
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "@types/node": "^20.11.30"
+  }
+} 

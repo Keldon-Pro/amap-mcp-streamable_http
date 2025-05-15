@@ -1,0 +1,29 @@
+{
+    "name": "amap-maps-mcp-server",
+    "version": "1.0.0",
+    "description": "MCP server for AMap Maps API (Streamable HTTP)",
+    "type": "module",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "npx tsc",
+        "start": "node dist/index.js",
+        "dev": "npx tsc --watch",
+        "clean": "npx rimraf dist",
+        "test": "node test.js"
+    },
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.0.1",
+        "express": "^4.18.2",
+        "node-fetch": "^3.3.2",
+        "zod": "^3.22.4",
+        "dotenv": "^16.4.5"
+    },
+    "devDependencies": {
+        "@types/cors": "^2.8.18",
+        "@types/express": "^4.17.21",
+        "@types/node": "^20.17.46",
+        "@types/node-fetch": "^2.6.12",
+        "rimraf": "^5.0.5",
+        "typescript": "^5.8.3"
+    }
+}
