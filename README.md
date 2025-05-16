@@ -13,8 +13,10 @@
 ├── server_statefull/   # 有状态（会话管理）高德地图 MCP Server
 ├── client/             # MCP 协议客户端及测试用例
 ├── env.example         # 环境变量示例
+├── 高德地图MCP工具.md   # 高德地图 MCP 工具接口文档
 └── README.md
 ```
+
 
 ## ✨ 功能特性
 
@@ -62,7 +64,7 @@
 - 支持流式响应，提升交互体验
 - 安全性与可扩展性更好，可结合 HTTP 认证、CORS、负载均衡等 Web 标准能力
 
-⚠️ **注意：** MCP 官方推荐新项目优先采用 Streamable HTTP 协议，Stdio 主要用于兼容老旧本地插件场景。
+> ⚠️ **注意：** MCP 官方推荐新项目优先采用 Streamable HTTP 协议，Stdio 主要用于兼容老旧本地插件场景。
 
 
 
@@ -164,9 +166,27 @@ npm run test      # 全量工具自动化测试
 
 ### 2. 使用官方 MCP Inspector 可视化测试
 
-- 访问 [MCP Inspector](https://github.com/modelcontextprotocol/inspector)
-- 在 Inspector 页面输入你的 MCP Server 地址（如 `http://localhost:3000/mcp` 或 `http://localhost:3001/mcp`），点击 Connect
-- 可在网页界面中交互式测试所有工具、查看请求与响应详情，便于调试和演示
+- 你无需clone Inspector仓库，直接用 npx 启动 Inspector 并调试本地 MCP Server：
+
+  ```bash
+  npx @modelcontextprotocol/inspector node build/index.js
+  ```
+  > 其中 `node build/index.js` 替换为你实际的 server 启动命令。
+
+- 如需传递参数或环境变量：
+  ```bash
+  npx @modelcontextprotocol/inspector -e key=value -e key2=xxx node build/index.js arg1 arg2
+  # 或用 -- 分隔 inspector 参数和 server 参数
+  npx @modelcontextprotocol/inspector -e key=xxx -- node build/index.js -e server-flag
+  ```
+
+- 如需自定义 Inspector/Proxy 端口：
+  ```bash
+  CLIENT_PORT=8080 SERVER_PORT=9000 npx @modelcontextprotocol/inspector node build/index.js
+  ```
+  > 默认UI端口为6274，Proxy端口为6277。
+
+- 启动后，浏览器访问 `http://localhost:6274`，即可在 Web UI 交互式测试所有工具、查看请求与响应详情，便于调试和演示。
 
 ### 3. 使用服务端自带测试脚本
 

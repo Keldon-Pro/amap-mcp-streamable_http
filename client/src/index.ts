@@ -3,9 +3,8 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 
 
-
-// 加载环境变量
-const MCP_SERVER_URL = "http://localhost:3001/mcp";
+const MCP_SERVER_URL = "http://localhost:3000/mcp"; //无状态MCP Server URL
+// const MCP_SERVER_URL = "http://localhost:3001/mcp"; //有状态MCP Server URL
 
 async function main() {
   // 创建 MCP Client 实例

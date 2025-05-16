@@ -27,7 +27,7 @@ function writeToLog(sessionId, toolName, data) {
   const logPath = path.join(logDir, logFileName);
   
   // 构造日志内容，添加时间戳和工具名称
-  const timestamp = new Date().toISOString();
+  const timestamp = new Date().toLocaleString('zh-CN', { hour12: false, timeZone: 'Asia/Shanghai' });
   const logEntry = `\n\n--- ${timestamp} - ${toolName} ---\n${JSON.stringify(data, null, 2)}`;
   
   // 检查文件是否存在，存在则追加，不存在则创建新文件

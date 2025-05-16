@@ -14,8 +14,17 @@ function writeToLog(toolName, data) {
   }
   const logFileName = `stateless_test.log`;
   const logPath = path.join(logDir, logFileName);
-  const timestamp = new Date().toISOString();
-  const logEntry = `\n\n--- ${timestamp} - ${toolName} ---\n${JSON.stringify(data, null, 2)}`;
+  const timestamp = new Date().toLocaleString('zh-CN', { hour12: false, timeZone: 'Asia/Shanghai' });
+  let logContent = data;
+  // 尝试自动解析content[0].text为JSON
+  if (data && data.content && Array.isArray(data.content) && data.content[0]?.type === 'text') {
+    try {
+      logContent = JSON.parse(data.content[0].text);
+    } catch {
+      logContent = data;
+    }
+  }
+  const logEntry = `\n\n--- ${timestamp} - ${toolName} ---\n${JSON.stringify(logContent, null, 2)}`;
   fs.appendFileSync(logPath, logEntry);
   console.log(`详细信息已保存到日志: ${logPath}`);
 }

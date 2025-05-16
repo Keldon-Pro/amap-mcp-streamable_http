@@ -17,6 +17,25 @@ const MCP_SERVER_URL = process.env.MCP_SERVER_URL || "http://localhost:3001/mcp"
 // Get session ID from command line if provided
 const sessionId = process.argv[2];
 
+// 工具函数：写入日志，时间戳为北京时间
+function writeToLog(sessionId, toolName, data) {
+  const logDir = path.resolve(process.cwd(), 'logs');
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir);
+  }
+  const logFileName = `session_${sessionId}.log`;
+  const logPath = path.join(logDir, logFileName);
+  const timestamp = new Date().toLocaleString('zh-CN', { hour12: false, timeZone: 'Asia/Shanghai' });
+  const logEntry = `\n\n--- ${timestamp} - ${toolName} ---\n${JSON.stringify(data, null, 2)}`;
+  if (fs.existsSync(logPath)) {
+    fs.appendFileSync(logPath, logEntry);
+  } else {
+    const initialContent = `SESSION ID: ${sessionId}\n创建时间: ${timestamp}${logEntry}`;
+    fs.writeFileSync(logPath, initialContent);
+  }
+  console.log(`详细信息已保存到会话日志: ${logPath}`);
+}
+
 async function testResumeSession() {
   console.log("测试会话恢复...");
   console.log(`连接到服务器: ${MCP_SERVER_URL}`);
@@ -78,6 +97,8 @@ async function testResumeSession() {
             data.forecasts[0].casts.slice(0, 2).forEach(cast => {
               console.log(`- ${cast.date}: 白天 ${cast.dayweather} ${cast.daytemp}°C, 夜间 ${cast.nightweather} ${cast.nighttemp}°C`);
             });
+            // 写入日志
+            writeToLog(transport.sessionId, 'weather', data);
           } else {
             console.log("天气查询失败:", data);
           }
