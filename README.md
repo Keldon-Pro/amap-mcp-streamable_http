@@ -176,7 +176,7 @@ npm run test      # 全量工具自动化测试
   ![MCP Inspector](./images/MCP%20Inspector.png)
 如上图所示，
   - Transport Type选择"Streamable Http"; 
-  - URL填"http://localhost:3001/mcp"//取决于你的Server URL
+  - URL填"http://localhost:3001/mcp" //取决于你的Server URL
   - 填好后，便可一键连接！
 
 
