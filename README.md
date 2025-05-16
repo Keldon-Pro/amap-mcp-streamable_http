@@ -84,7 +84,7 @@
 - **资源消耗更高**：需管理会话生命周期和资源释放
 - **适用场景**：需要上下文记忆、长会话、多轮推理的 LLM 应用、个性化服务等
 
-
+<br>
 
 > **会话管理机制简介：**  
 > - 服务端在初始化时通过 `Mcp-Session-Id` 响应头分配唯一会话 ID，客户端后续请求需携带该 ID  
@@ -166,27 +166,22 @@ npm run test      # 全量工具自动化测试
 
 ### 2. 使用官方 MCP Inspector 可视化测试
 
-- 你无需clone Inspector仓库，直接用 npx 启动 Inspector 并调试本地 MCP Server：
+- 在server目录下，直接用 npx 启动 Inspector 并调试本地 MCP Server：
 
   ```bash
-  npx @modelcontextprotocol/inspector node build/index.js
+  npx @modelcontextprotocol/inspector
   ```
-  > 其中 `node build/index.js` 替换为你实际的 server 启动命令。
-
-- 如需传递参数或环境变量：
-  ```bash
-  npx @modelcontextprotocol/inspector -e key=value -e key2=xxx node build/index.js arg1 arg2
-  # 或用 -- 分隔 inspector 参数和 server 参数
-  npx @modelcontextprotocol/inspector -e key=xxx -- node build/index.js -e server-flag
-  ```
-
-- 如需自定义 Inspector/Proxy 端口：
-  ```bash
-  CLIENT_PORT=8080 SERVER_PORT=9000 npx @modelcontextprotocol/inspector node build/index.js
-  ```
-  > 默认UI端口为6274，Proxy端口为6277。
-
 - 启动后，浏览器访问 `http://localhost:6274`，即可在 Web UI 交互式测试所有工具、查看请求与响应详情，便于调试和演示。
+
+  ![MCP Inspector](./images/MCP%20Inspector.png)
+如上图所示，
+  - Transport Type选择"Streamable Http"; 
+  - URL填"http://localhost:3001/mcp"//取决于你的Server URL
+  - 填好后，便可一键连接！
+
+
+  
+- 更详细的Inspector使用方法请访问 [MCP Inspector](https://github.com/modelcontextprotocol/inspector)
 
 ### 3. 使用服务端自带测试脚本
 
