@@ -9,7 +9,7 @@
         "start": "node dist/index.js",
         "dev": "npx tsc --watch",
         "clean": "npx rimraf dist",
-        "test": "node test.js"
+        "test": "node test/test.js"
     },
     "dependencies": {
         "@modelcontextprotocol/sdk": "^1.0.1",

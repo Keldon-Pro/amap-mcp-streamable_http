@@ -17,12 +17,15 @@ const MCP_SERVER_URL = process.env.MCP_SERVER_URL || "http://localhost:3001/mcp"
 // Get session ID from command line if provided
 const sessionId = process.argv[2];
 
-// 工具函数：写入日志，时间戳为北京时间
+// 工具函数：创建日志目录和写入日志文件
 function writeToLog(sessionId, toolName, data) {
+  // 日志目录总是相对于当前工作目录
   const logDir = path.resolve(process.cwd(), 'logs');
   if (!fs.existsSync(logDir)) {
-    fs.mkdirSync(logDir);
+    fs.mkdirSync(logDir, { recursive: true });
   }
+  
+  // 使用session-id作为日志文件名
   const logFileName = `session_${sessionId}.log`;
   const logPath = path.join(logDir, logFileName);
   const timestamp = new Date().toLocaleString('zh-CN', { hour12: false, timeZone: 'Asia/Shanghai' });
@@ -112,7 +115,7 @@ async function testResumeSession() {
     console.log("\n测试完成！会话仍保持活跃状态，只要持续使用，会话将一直有效。");
     console.log("（注意：如果会话闲置超过1小时没有请求，则会自动终止）");
     console.log(`你可以通过会话ID ${transport.sessionId} 继续使用这个会话。`);
-    console.log('使用命令: node test-resume-session.js ' + transport.sessionId);
+    console.log('使用命令: npm run resume-session -- ' + transport.sessionId);
   } catch (error) {
     console.error("测试过程中出错:", error);
   }

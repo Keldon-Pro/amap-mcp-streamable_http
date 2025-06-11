@@ -176,7 +176,7 @@ npm run test      # 全量工具自动化测试
   ![MCP Inspector](./images/MCP%20Inspector.png)
 如上图所示，
   - Transport Type选择"Streamable Http"; 
-  - URL填"http://localhost:3001/mcp" //取决于你的Server URL
+  - URL填"http://localhost:3001/mcp" // 取决于你的Server URL
   - 填好后，便可一键连接！
 
 
@@ -203,13 +203,82 @@ npm run test      # 全量工具自动化测试
 
 
 
-## ⚙️ 环境变量说明
 
-请参考 `env.example` 文件，主要变量如下：
+## 🐳 Docker 部署
 
-- `AMAP_MAPS_API_KEY`：高德地图开放平台 API Key（必填）
-- `PORT`：服务端监听端口（可选，默认 3000）
+### 使用 Docker Compose（推荐）
 
+首先，确保你在项目根目录下：
+```bash
+cd amap-mcp-streamable_http  # 进入项目根目录
+```
+
+1. 配置环境变量：
+```bash
+cp env.example .env
+# 编辑 .env 文件，填写 AMAP_MAPS_API_KEY
+```
+
+2. 启动所有服务：
+```bash
+docker-compose up -d
+```
+
+此命令会同时启动无状态服务器（端口3000）和有状态服务器（端口3001）。
+
+### 日志查看
+
+服务器日志存储在 Docker 命名卷中：
+- 无状态服务器日志卷：`stateless_logs`
+- 有状态服务器日志卷：`stateful_logs`
+
+你可以通过以下命令查看日志：
+```bash
+# 查看容器实时日志
+docker-compose logs -f stateless  # 无状态服务器日志
+docker-compose logs -f stateful   # 有状态服务器日志
+
+# 查看日志卷信息
+docker volume inspect amap-mcp_stateless_logs  # 无状态服务器日志卷信息
+docker volume inspect amap-mcp_stateful_logs   # 有状态服务器日志卷信息
+```
+
+### 单独使用 Docker
+
+如果你只需要运行某一个服务器：
+
+#### 无状态服务器：
+```bash
+cd server_stateless
+docker build -t amap-mcp-stateless .
+docker run -d \
+  -p 3000:3000 \
+  -v stateless_logs:/app/logs \
+  --env-file ../.env \
+  amap-mcp-stateless
+```
+
+#### 有状态服务器：
+```bash
+cd server_stateful
+docker build -t amap-mcp-stateful .
+docker run -d \
+  -p 3001:3001 \
+  -v stateful_logs:/app/logs \
+  --env-file ../.env \
+  amap-mcp-stateful
+```
+
+### 数据持久化
+
+Docker 命名卷会自动管理日志文件的持久化，即使容器重启或删除，日志数据也会保留。如果需要完全清理日志数据，可以使用：
+```bash
+# 删除指定日志卷
+docker volume rm amap-mcp_stateless_logs amap-mcp_stateful_logs
+
+# 或者在停止服务的同时删除卷
+docker-compose down -v
+```
 
 
 ## 📚 参考文档
@@ -222,9 +291,6 @@ npm run test      # 全量工具自动化测试
 ## 🤝 贡献
 
 欢迎 issue、PR 和建议！
-
-
-
 
 
 

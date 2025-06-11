@@ -1,0 +1,34 @@
+name: amap-mcp
+
+services:
+  stateless:
+    build:
+      context: ./server_stateless
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - PORT=3000
+    volumes:
+      - stateless_logs:/app/logs
+    restart: unless-stopped
+
+  stateful:
+    build:
+      context: ./server_stateful
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env
+    environment:
+      - PORT=3001
+    volumes:
+      - stateful_logs:/app/logs
+    restart: unless-stopped
+
+volumes:
+  stateless_logs:
+  stateful_logs: 

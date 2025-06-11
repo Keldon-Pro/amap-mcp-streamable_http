@@ -6,13 +6,18 @@ import fs from 'fs';
 // MCP server 地址
 const MCP_SERVER_URL = "http://localhost:3000/mcp";
 
+// 生成唯一日志文件名（test-YYYYMMDD-HHmmss.log）
+const now = new Date(new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }));
+const pad = n => n.toString().padStart(2, '0');
+const logFileName = `test-${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}.log`;
+
 // 日志写入函数
-function writeToLog(toolName, data) {
+function writeToLog(toolName, data, args) {
+  // 日志目录总是相对于当前工作目录
   const logDir = path.resolve(process.cwd(), 'logs');
   if (!fs.existsSync(logDir)) {
-    fs.mkdirSync(logDir);
+    fs.mkdirSync(logDir, { recursive: true });
   }
-  const logFileName = `stateless_test.log`;
   const logPath = path.join(logDir, logFileName);
   const timestamp = new Date().toLocaleString('zh-CN', { hour12: false, timeZone: 'Asia/Shanghai' });
   let logContent = data;
@@ -24,7 +29,7 @@ function writeToLog(toolName, data) {
       logContent = data;
     }
   }
-  const logEntry = `\n\n--- ${timestamp} - ${toolName} ---\n${JSON.stringify(logContent, null, 2)}`;
+  const logEntry = `\n\n--- ${timestamp} - ${toolName} ---\n调用参数: ${JSON.stringify(args, null, 2)}\n返回结果: ${JSON.stringify(logContent, null, 2)}`;
   fs.appendFileSync(logPath, logEntry);
   console.log(`详细信息已保存到日志: ${logPath}`);
 }
@@ -54,7 +59,7 @@ async function testStatelessServer() {
       name: "geo",
       arguments: { address: "海南省海口市美兰区华彩·海口湾广场", city: "海口" }
     });
-    writeToLog('geo', geoResult);
+    writeToLog('geo', geoResult, { address: "海南省海口市美兰区华彩·海口湾广场", city: "海口" });
     if (geoResult?.content?.[0]?.type === "text") {
       try {
         const data = JSON.parse(geoResult.content[0].text);
@@ -75,7 +80,7 @@ async function testStatelessServer() {
       name: "regeocode",
       arguments: { location: "110.312589,20.055793" }
     });
-    writeToLog('regeocode', regeoResult);
+    writeToLog('regeocode', regeoResult, { location: "110.312589,20.055793" });
     if (regeoResult?.content?.[0]?.type === "text") {
       try {
         const data = JSON.parse(regeoResult.content[0].text);
@@ -95,7 +100,7 @@ async function testStatelessServer() {
       name: "direction_driving",
       arguments: { origin: "110.312589,20.055793", destination: "110.330162,20.022889" }
     });
-    writeToLog('direction_driving', drivingResult);
+    writeToLog('direction_driving', drivingResult, { origin: "110.312589,20.055793", destination: "110.330162,20.022889" });
     if (drivingResult?.content?.[0]?.type === "text") {
       try {
         const data = JSON.parse(drivingResult.content[0].text);
@@ -117,7 +122,7 @@ async function testStatelessServer() {
       name: "direction_walking",
       arguments: { origin: "110.312589,20.055793", destination: "110.330162,20.022889" }
     });
-    writeToLog('direction_walking', walkingResult);
+    writeToLog('direction_walking', walkingResult, { origin: "110.312589,20.055793", destination: "110.330162,20.022889" });
     if (walkingResult?.content?.[0]?.type === "text") {
       try {
         const data = JSON.parse(walkingResult.content[0].text);
@@ -139,7 +144,7 @@ async function testStatelessServer() {
       name: "direction_transit_integrated",
       arguments: { origin: "110.312589,20.055793", destination: "110.330162,20.022889", city: "海口", cityd: "海口" }
     });
-    writeToLog('direction_transit_integrated', transitResult);
+    writeToLog('direction_transit_integrated', transitResult, { origin: "110.312589,20.055793", destination: "110.330162,20.022889", city: "海口", cityd: "海口" });
     if (transitResult?.content?.[0]?.type === "text") {
       try {
         const data = JSON.parse(transitResult.content[0].text);
@@ -162,7 +167,7 @@ async function testStatelessServer() {
       name: "bicycling",
       arguments: { origin: "110.312589,20.055793", destination: "110.330162,20.022889" }
     });
-    writeToLog('bicycling', bicyclingResult);
+    writeToLog('bicycling', bicyclingResult, { origin: "110.312589,20.055793", destination: "110.330162,20.022889" });
     if (bicyclingResult?.content?.[0]?.type === "text") {
       try {
         const data = JSON.parse(bicyclingResult.content[0].text);
@@ -185,7 +190,7 @@ async function testStatelessServer() {
       name: "text_search",
       arguments: { keywords: "咖啡", city: "海口" }
     });
-    writeToLog('text_search', textSearchResult);
+    writeToLog('text_search', textSearchResult, { keywords: "咖啡", city: "海口" });
     if (textSearchResult?.content?.[0]?.type === "text") {
       try {
         const data = JSON.parse(textSearchResult.content[0].text);
@@ -208,7 +213,7 @@ async function testStatelessServer() {
       name: "around_search",
       arguments: { keywords: "餐厅", location: "110.312589,20.055793", radius: "1000" }
     });
-    writeToLog('around_search', aroundSearchResult);
+    writeToLog('around_search', aroundSearchResult, { keywords: "餐厅", location: "110.312589,20.055793", radius: "1000" });
     let firstPoiId = null;
     if (aroundSearchResult?.content?.[0]?.type === "text") {
       try {
@@ -234,7 +239,7 @@ async function testStatelessServer() {
         name: "search_detail",
         arguments: { id: firstPoiId }
       });
-      writeToLog('search_detail', detailResult);
+      writeToLog('search_detail', detailResult, { id: firstPoiId });
       if (detailResult?.content?.[0]?.type === "text") {
         try {
           const data = JSON.parse(detailResult.content[0].text);
@@ -260,7 +265,7 @@ async function testStatelessServer() {
       name: "weather",
       arguments: { city: "海口" }
     });
-    writeToLog('weather', weatherResult);
+    writeToLog('weather', weatherResult, { city: "海口" });
     if (weatherResult?.content?.[0]?.type === "text") {
       try {
         const data = JSON.parse(weatherResult.content[0].text);
@@ -285,7 +290,7 @@ async function testStatelessServer() {
       name: "distance",
       arguments: { origins: "110.312589,20.055793", destination: "110.330162,20.022889", type: "1" }
     });
-    writeToLog('distance', distanceResult);
+    writeToLog('distance', distanceResult, { origins: "110.312589,20.055793", destination: "110.330162,20.022889", type: "1" });
     if (distanceResult?.content?.[0]?.type === "text") {
       try {
         const data = JSON.parse(distanceResult.content[0].text);
@@ -307,7 +312,7 @@ async function testStatelessServer() {
       name: "ip_location",
       arguments: { ip: "114.114.114.114" }
     });
-    writeToLog('ip_location', ipResult);
+    writeToLog('ip_location', ipResult, { ip: "114.114.114.114" });
     if (ipResult?.content?.[0]?.type === "text") {
       try {
         const data = JSON.parse(ipResult.content[0].text);
@@ -326,7 +331,7 @@ async function testStatelessServer() {
     // 关闭连接
     await client.close();
     transport.close();
-    console.log("\n所有工具测试完成！详细结果见 logs/stateless_test.log");
+    console.log(`\n所有工具测试完成！详细结果见 logs/${logFileName}`);
   } catch (error) {
     console.error('测试过程中出错:', error);
   }
